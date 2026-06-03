@@ -106,10 +106,15 @@
   .field input[type=date],
   .field select,
   .field textarea {
-    width: 100%; border: 1px solid var(--border); border-radius: 7px;
+    width: 100%; max-width: 100%; box-sizing: border-box;
+    border: 1px solid var(--border); border-radius: 7px;
     padding: 11px 14px; font-family: Georgia, serif; font-size: 14px;
     color: var(--text); background: var(--light); outline: none;
     transition: border-color .2s, background .2s;
+    -webkit-appearance: none; appearance: none;
+  }
+  .field input[type=date] {
+    display: block; width: 100%; max-width: 100%;
   }
   .field input:focus, .field select:focus, .field textarea:focus {
     border-color: var(--gold); background: #fff;
