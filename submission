@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Success Resources Protégé Program – Questionnaire</title>
+<script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+<style>
+  :root {
+    --gold: #C9A84C;
+    --dark: #1a1a2e;
+    --light: #f9f6ef;
+    --accent: #e8d9b0;
+    --border: #d4c4a0;
+    --text: #2c2c2c;
+    --muted: #888;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', serif; background: var(--light); color: var(--text); min-height: 100vh; }
+
+  /* ── SHARED WRAPPER ── */
+  .page {
+    display: none;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+  .page.active { display: block; }
+
+  /* ── SHARED HEADER ── */
+  .page-header { text-align: center; margin-bottom: 36px; }
+  .page-header .badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--accent);
+    border-radius: 99px;
+    padding: 5px 16px;
+    margin-bottom: 16px;
+  }
+  .page-header h1 { font-size: 26px; font-weight: normal; color: var(--dark); line-height: 1.4; }
+  .page-header p { color: var(--muted); font-size: 14px; margin-top: 10px; line-height: 1.7; }
+  .gold-rule { width: 48px; height: 2px; background: var(--gold); margin: 18px auto; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px 40px;
+    margin-bottom: 20px;
+  }
+
+  /* ── COVER ── */
+  #page-cover .letter-meta {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; color: var(--muted);
+    margin-bottom: 20px;
+  }
+  #page-cover .letter-meta .dot { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; }
+  #page-cover .letter-body { font-size: 15px; line-height: 1.95; color: var(--text); }
+  #page-cover .letter-body p { margin-bottom: 14px; }
+  #page-cover .steps { margin: 10px 0 14px 22px; }
+  #page-cover .steps li { margin-bottom: 8px; font-size: 14px; }
+  #page-cover .sig { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--accent); font-size: 13px; color: var(--muted); line-height: 1.8; }
+  #page-cover .sig strong { color: var(--dark); }
+  .begin-btn {
+    display: block; width: 100%; margin-top: 28px;
+    background: var(--gold); color: var(--dark);
+    border: none; padding: 16px;
+    font-size: 15px; font-family: Georgia, serif;
+    letter-spacing: 1px; cursor: pointer; border-radius: 8px;
+    transition: opacity .2s;
+  }
+  .begin-btn:hover { opacity: .85; }
+
+  /* ── PROGRESS ── */
+  .progress-wrap { margin-bottom: 28px; }
+  .step-indicators { display: flex; gap: 6px; margin-bottom: 12px; }
+  .step-dot {
+    flex: 1; height: 4px; border-radius: 99px; background: var(--accent);
+    transition: background .3s;
+  }
+  .step-dot.done { background: var(--gold); }
+  .step-dot.active { background: var(--dark); }
+  .step-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  .step-meta .step-title { font-weight: bold; color: var(--dark); }
+
+  /* ── SECTION CARD ── */
+  .section-label {
+    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 22px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--accent);
+  }
+
+  /* ── FIELDS ── */
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-size: 13px; font-weight: bold; color: var(--dark); margin-bottom: 7px; }
+  .field label .opt { font-weight: normal; color: #aaa; font-size: 11px; }
+  .field input[type=text],
+  .field input[type=email],
+  .field input[type=tel],
+  .field input[type=date],
+  .field select,
+  .field textarea {
+    width: 100%; border: 1px solid var(--border); border-radius: 7px;
+    padding: 11px 14px; font-family: Georgia, serif; font-size: 14px;
+    color: var(--text); background: var(--light); outline: none;
+    transition: border-color .2s, background .2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--gold); background: #fff;
+  }
+  .field textarea { min-height: 96px; resize: vertical; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field .checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .field .checkbox-group label {
+    font-weight: normal; display: flex; align-items: center; gap: 7px;
+    background: var(--light); border: 1px solid var(--border);
+    border-radius: 7px; padding: 9px 14px; cursor: pointer;
+    font-size: 13px; transition: border-color .2s, background .2s;
+  }
+  .field .checkbox-group label:hover { border-color: var(--gold); background: #fff; }
+  .field .checkbox-group input[type=checkbox] { accent-color: var(--gold); }
+
+  /* ── NAV BUTTONS ── */
+  .nav-row { display: flex; gap: 12px; margin-top: 8px; }
+  .btn-prev, .btn-next {
+    flex: 1; padding: 14px; font-family: Georgia, serif; font-size: 14px;
+    cursor: pointer; border-radius: 8px; transition: all .2s; letter-spacing: .5px;
+  }
+  .btn-prev { background: #fff; color: var(--dark); border: 1px solid var(--border); }
+  .btn-prev:hover { border-color: var(--gold); }
+  .btn-next { background: var(--dark); color: var(--gold); border: 2px solid var(--dark); }
+  .btn-next:hover { background: var(--gold); color: var(--dark); border-color: var(--gold); }
+  .btn-generate { background: var(--gold); color: var(--dark); border: none; }
+  .btn-generate:hover { opacity: .85; }
+
+  /* ── REPORT ── */
+  #page-report .report-actions { display: flex; gap: 10px; justify-content: center; margin-bottom: 32px; }
+  #page-report .report-actions button {
+    padding: 12px 26px; font-family: Georgia, serif; font-size: 13px;
+    cursor: pointer; border-radius: 7px; transition: all .2s;
+  }
+  .btn-edit { background: #fff; color: var(--dark); border: 1px solid var(--border); }
+  .btn-edit:hover { border-color: var(--gold); }
+  .btn-print { background: var(--gold); color: var(--dark); border: none; }
+  .btn-print:hover { opacity: .85; }
+
+  #report-doc { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 52px 56px; }
+  .rpt-header { text-align: center; padding-bottom: 28px; margin-bottom: 32px; border-bottom: 2px solid var(--gold); }
+  .rpt-header .rpt-badge { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); }
+  .rpt-header h1 { font-size: 22px; font-weight: normal; color: var(--dark); margin: 12px 0 6px; }
+  .rpt-header .rpt-sub { font-size: 13px; color: var(--muted); }
+  .rpt-section { margin-bottom: 30px; }
+  .rpt-section-title { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); padding-bottom: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--accent); }
+  .rpt-field { margin-bottom: 13px; }
+  .rpt-label { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
+  .rpt-value { color: var(--dark); font-size: 14px; white-space: pre-wrap; line-height: 1.7; }
+  .rpt-value.empty { color: #ccc; font-style: italic; }
+  .rpt-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .rpt-footer { text-align: center; font-size: 11px; color: #bbb; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--accent); }
+
+  @media print {
+    body { background: #fff; }
+    #page-report { padding: 0; max-width: 100%; }
+    .report-actions { display: none !important; }
+    #report-doc { border: none; border-radius: 0; padding: 30px 40px; }
+  }
+  @media (max-width: 580px) {
+    .card { padding: 24px 20px; }
+    .row-2, .rpt-2col { grid-template-columns: 1fr; }
+    #report-doc { padding: 30px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 0: COVER LETTER -->
+<div class="page active" id="page-cover">
+  <div class="page-header">
+    <div class="badge">Success Resources · Protégé Program</div>
+    <h1>Welcome, Applicant</h1>
+    <div class="gold-rule"></div>
+    <p>Please read the following letter before beginning your questionnaire.</p>
+  </div>
+  <div class="card">
+    <div class="letter-meta">
+      <div class="dot"></div>
+      <span>From: Amy Kok, PA to CEO · Success Resources</span>
+      <div class="dot"></div>
+      <span>Deadline: 24 May 2026</span>
+    </div>
+    <div class="letter-body">
+      <p><strong>Subject: Success Resources Protégé Program – Next Step</strong></p>
+      <p>Dear Applicant,</p>
+      <p>Congratulations once again on taking the first step toward joining the <strong>Success Resources Protégé Program</strong>.</p>
+      <p>As part of the selection process, we'd like to get to know you better. The questionnaire below is designed to help Richard understand your background, business, and goals — and will form the foundation of your upcoming 1-on-1 interview with him.</p>
+      <p><strong>What to do next:</strong></p>
+      <ol class="steps">
+        <li>Click <em>Begin Questionnaire</em> below.</li>
+        <li>Answer all questions honestly and thoughtfully — there's no right or wrong.</li>
+        <li>Click <em>Submit Questionnaire</em> at the end to complete your submission.</li>
+        <li>On the confirmation page, click <em>View &amp; Print Your Profile</em> to save a copy for your records.</li>
+      </ol>
+      <p>We'll then schedule your interview with Richard. Should you have any questions, feel free to reach out directly via email or WhatsApp.</p>
+      <p>We're excited to learn more about you and your vision!</p>
+      <div class="sig">
+        Warm regards,<br>
+        <strong>Amy Kok</strong> · +60163319668<br>
+        Personal Assistant to CEO, Success Resources<br>
+        amy.kok@srglobal.com
+      </div>
+    </div>
+    <button class="begin-btn" onclick="goTo(1)">Begin Questionnaire →</button>
+  </div>
+</div>
+
+<!-- PAGE 1: PERSONAL INFORMATION -->
+<div class="page" id="page-1">
+  <div class="page-header">
+    <div class="badge">Success Resources · Protégé Program</div>
+    <h1>Get-To-Know-You Questionnaire</h1>
+  </div>
+  <div class="progress-wrap">
+    <div class="step-indicators" id="dots"></div>
+    <div class="step-meta">
+      <span class="step-title" id="step-title-1">Personal Information</span>
+      <span id="step-count-1">1 of 7</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Section 1 — Personal Information</div>
+    <div class="row-2">
+      <div class="field"><label>Full Name</label><input type="text" id="s1_name" placeholder="Your full name"></div>
+      <div class="field"><label>Date of Birth</label><input type="date" id="s1_dob"></div>
+    </div>
+    <div class="row-2">
+      <div class="field"><label>Current City &amp; Country</label><input type="text" id="s1_city" placeholder="City, Country"></div>
+      <div class="field"><label>Nationality &amp; Ethnicity <span class="opt">(optional)</span></label><input type="text" id="s1_nationality" placeholder="Your nationality / ethnicity"></div>
+    </div>
+    <div class="row-2">
+      <div class="field"><label>Email Address</label><input type="email" id="s1_email" placeholder="your@email.com"></div>
+      <div class="field"><label>Mobile / WhatsApp</label><input type="tel" id="s1_phone" placeholder="Include country code"></div>
+    </div>
+    <div class="field">
+      <label>Preferred Communication Method</label>
+      <select id="s1_comms">
+        <option value="">— Select —</option>
+        <option>WhatsApp</option><option>Email</option><option>Call</option>
+      </select>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(0)">← Back</button>
+    <button class="btn-next" onclick="goTo(2)">Next →</button>
+  </div>
+</div>
+
+<!-- PAGE 2: PERSONAL BACKGROUND -->
+<div class="page" id="page-2">
+  <div class="page-header">
+    <div class="badge">Success Resources · Protégé Program</div>
+    <h1>Get-To-Know-You Questionnaire</h1>
+  </div>
+  <div class="progress-wrap">
+    <div class="step-indicators" id="dots2"></div>
+    <div class="step-meta">
+      <span class="step-title">Personal Background &amp; Education</span>
+      <span>2 of 7</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Section 2 — Personal Background &amp; Education</div>
+    <div class="field"><label>What was your upbringing like?</label><textarea id="s2_upbringing" placeholder="Brief family background, childhood, early life experiences…"></textarea></div>
+    <div class="field"><label>Where did you go to school/university? What did you study?</label><textarea id="s2_education" placeholder="Schools, degrees, subjects…"></textarea></div>
+    <div class="field"><label>What was your first job or business? How did it shape your journey?</label><textarea id="s2_firstjob"></textarea></div>
+    <div class="field"><label>What are some life events or turning points that significantly shaped who you are today?</label><textarea id="s2_turning"></textarea></div>
+    <div class="field"><label>Outside of business, what are your passions or interests?</label><textarea id="s2_passions" style="min-height:76px"></textarea></div>
+    <div class="field"><label>What values do you live by in life and business?</label><textarea id="s2_values" style="min-height:76px"></textarea></div>
+    <div class="row-2">
+      <div class="field"><label>What makes you happy?</label><textarea id="s2_happy" style="min-height:76px"></textarea></div>
+      <div class="field"><label>What makes you sad?</label><textarea id="s2_sad" style="min-height:76px"></textarea></div>
+    </div>
+    <div class="field"><label>What is the biggest problem you are facing now?</label><textarea id="s2_problem"></textarea></div>
+  </div>
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(1)">← Back</button>
+    <button class="btn-next" onclick="goTo(3)">Next →</button>
+  </div>
+</div>
+
+<!-- PAGE 3: BUSINESS PROFILE -->
+<div class="page" id="page-3">
+  <div class="page-header">
+    <div class="badge">Success Resources · Protégé Program</div>
+    <h1>Get-To-Know-You Questionnaire</h1>
+  </div>
+  <div class="progress-wrap">
+    <div class="step-indicators" id="dots3"></div>
+    <div class="step-meta">
+      <span class="step-title">Business Profile</span>
+      <span>3 of 7</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Section 3 — Business Profile</div>
+    <div class="row-2">
+      <div class="field"><label>Business Name <span class="opt">(if any)</span></label><input type="text" id="s3_bizname" placeholder="Your company name"></div>
+      <div class="field"><label>Your Current Role / Title</label><input type="text" id="s3_role" placeholder="e.g. Founder & CEO"></div>
+    </div>
+    <div class="row-2">
+      <div class="field"><label>Years in Business</label><input type="text" id="s3_tenure" placeholder="e.g. 3 years"></div>
+      <div class="field"><label>Monthly Revenue (USD)</label><input type="text" id="s3_revenue" placeholder="e.g. $50,000"></div>
+    </div>
+    <div class="field"><label>Team Size <span class="opt">(if any)</span></label><input type="text" id="s3_team" placeholder="e.g. 5 full-time, 3 part-time"></div>
+    <div class="field"><label>Describe your business in one paragraph. What do you offer and who do you serve?</label><textarea id="s3_bizdesc"></textarea></div>
+    <div class="field"><label>Primary method of customer acquisition</label><input type="text" id="s3_acquisition" placeholder="e.g. ads, webinars, referrals, events…"></div>
+  </div>
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(2)">← Back</button>
+    <button class="btn-next" onclick="goTo(4)">Next →</button>
+  </div>
+</div>
+
+<!-- PAGE 4: GROWTH & STRUGGLES -->
+<div class="page" id="page-4">
+  <div class="page-header">
+    <div class="badge">Success Resources · Protégé Program</div>
+    <h1>Get-To-Know-You Questionnaire</h1>
+  </div>
+  <div class="progress-wrap">
+    <div class="step-indicators" id="dots4"></div>
+    <div class="step-meta">
+      <span class="step-title">Growth Stage &amp; Struggles</span>
+      <span>4 of 7</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Section 4 — Growth Stage &amp; Struggles</div>
+    <div class="field"><label>Top 3 business challenges right now</label><textarea id="s4_challenges" placeholder="1. …&#10;2. …&#10;3. …"></textarea></div>
+    <div class="field"><label>What have you tried that worked before but no longer works now?</label><textarea id="s4_notworking"></textarea></div>
+    <div class="field"><label>Have you attempted to scale regionally or internationally? If yes, how did it go?</label><textarea id="s4_scale"></textarea></div>
+    <div class="field"><label>What's one thing that needs to change immediately for your business to grow?</label><textarea id="s4_change"></textarea></div>
+  </div>
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(3)">← Back</button>
+    <button class="btn-next" onclick="goTo(5)">Next →</button>
+  </div>
+</div>
+
+<!-- PAGE 5: VISION & GOALS -->
+<div class="page" id="page-5">
+  <div class="page-header">
+    <div class="badge">Success Resources · Protégé Program</div>
+    <h1>Get-To-Know-You Questionnaire</h1>
+  </div>
+  <div class="progress-wrap">
+    <div class="step-indicators" id="dots5"></div>
+    <div class="step-meta">
+      <span class="step-title">Vision &amp; Goals</span>
+      <span>5 of 7</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Section 5 — Vision &amp; Goals</div>
+    <div class="field"><label>1-year goal for your business</label><textarea id="s5_1yr" style="min-height:80px"></textarea></div>
+    <div class="field"><label>5-year vision</label><textarea id="s5_5yr"></textarea></div>
+    <div class="field"><label>With the right support, how big could your business grow in 3 years?</label><textarea id="s5_3yr" style="min-height:80px"></textarea></div>
+    <div class="field"><label>Do you see yourself speaking on international stages? If yes, what message would you share?</label><textarea id="s5_speaking"></textarea></div>
+  </div>
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(4)">← Back</button>
+    <button class="btn-next" onclick="goTo(6)">Next →</button>
+  </div>
+</div>
+
+<!-- PAGE 6: PROGRAM FIT -->
+<div class="page" id="page-6">
+  <div class="page-header">
+    <div class="badge">Success Resources · Protégé Program</div>
+    <h1>Get-To-Know-You Questionnaire</h1>
+  </div>
+  <div class="progress-wrap">
+    <div class="step-indicators" id="dots6"></div>
+    <div class="step-meta">
+      <span class="step-title">Program Fit</span>
+      <span>6 of 7</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Section 6 — Program Fit</div>
+    <div class="field"><label>Why did you apply for the Success Resources Protégé Program?</label><textarea id="s6_why"></textarea></div>
+    <div class="field">
+      <label>What excites you most about this opportunity? <span class="opt">(select all that apply)</span></label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" value="Getting mentored by Richard"> Getting mentored by Richard</label>
+        <label><input type="checkbox" value="Access to SR's global systems"> Access to SR's global systems</label>
+        <label><input type="checkbox" value="Speaking on international stages"> Speaking on international stages</label>
+        <label><input type="checkbox" value="Business coaching"> Business coaching</label>
+        <label><input type="checkbox" value="Scaling internationally"> Scaling internationally</label>
+      </div>
+    </div>
+    <div class="field"><label>What do you hope to achieve through this program? Be specific.</label><textarea id="s6_achieve"></textarea></div>
+    <div class="row-2">
+      <div class="field">
+        <label>Preferred coaching style</label>
+        <select id="s6_style">
+          <option value="">— Select —</option>
+          <option>Direct</option><option>Supportive</option><option>Challenging</option><option>Strategic</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Commitment level</label>
+        <select id="s6_commit">
+          <option value="">— Select —</option>
+          <option>Yes, fully committed</option>
+          <option>Yes, with some reservations</option>
+          <option>I need more information first</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(5)">← Back</button>
+    <button class="btn-next" onclick="goTo(7)">Next →</button>
+  </div>
+</div>
+
+<!-- PAGE 7: FINAL REFLECTION -->
+<div class="page" id="page-7">
+  <div class="page-header">
+    <div class="badge">Success Resources · Protégé Program</div>
+    <h1>Get-To-Know-You Questionnaire</h1>
+  </div>
+  <div class="progress-wrap">
+    <div class="step-indicators" id="dots7"></div>
+    <div class="step-meta">
+      <span class="step-title">Final Reflection</span>
+      <span>7 of 7</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-label">Section 7 — Final Reflection</div>
+    <div class="field"><label>What makes you different from others applying for this program?</label><textarea id="s7_different"></textarea></div>
+    <div class="field"><label>If selected, how will you measure your success at the end of 6 months?</label><textarea id="s7_measure"></textarea></div>
+    <div class="field"><label>Is there anything you'd like to ask or discuss during your 1-on-1 interview?</label><textarea id="s7_questions" style="min-height:80px"></textarea></div>
+  </div>
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(6)">← Back</button>
+    <button class="btn-next btn-generate" onclick="submitQuestionnaire()">Submit Questionnaire →</button>
+  </div>
+</div>
+
+<!-- PAGE 8: THANK YOU -->
+<div class="page" id="page-thankyou">
+  <div class="page-header">
+    <div class="badge">Success Resources · Protégé Program</div>
+  </div>
+  <div class="card" style="text-align:center; padding: 56px 40px;">
+    <div style="font-size:48px; margin-bottom:20px;">✓</div>
+    <div style="font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:16px;">Submission Received</div>
+    <h2 style="font-size:24px; font-weight:normal; color:var(--dark); margin-bottom:16px;">Thank You for Submitting Your Questionnaire</h2>
+    <div style="width:48px; height:2px; background:var(--gold); margin:0 auto 24px;"></div>
+    <p style="font-size:15px; line-height:1.9; color:var(--text); max-width:480px; margin:0 auto 32px;">
+      We have received your completed profile. Our team will be reviewing your responses carefully, and we will be reaching out to you shortly to schedule your personal 1-on-1 interview with Richard.<br><br>
+      We look forward to learning more about you and your vision. In the meantime, please feel free to contact Amy should you have any questions.
+    </p>
+    <div style="font-size:13px; color:var(--muted); margin-bottom:32px;">
+      <strong style="color:var(--dark)">Amy Kok</strong> · amy.kok@srglobal.com · +60163319668
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 9: REPORT -->
+<div class="page" id="page-report">
+  <div class="page-header">
+    <div class="badge">Success Resources · Protégé Program</div>
+    <h1>Applicant Profile Report</h1>
+  </div>
+  <div class="report-actions">
+    <button class="btn-edit" onclick="goTo(7)">← Edit Answers</button>
+    <button class="btn-print" onclick="downloadDocx()">⬇ Download Word Document</button>
+  </div>
+  <div id="report-doc"></div>
+</div>
+
+<style>
+  .field.error input, .field.error select, .field.error textarea {
+    border-color: #e05252 !important;
+    background: #fff5f5 !important;
+  }
+  .field .err-msg { font-size: 12px; color: #e05252; margin-top: 5px; display: none; }
+  .field.error .err-msg { display: block; }
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+    background: #e05252; color: #fff; padding: 12px 24px; border-radius: 8px;
+    font-size: 13px; font-family: Georgia, serif; display: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15); z-index: 999;
+  }
+</style>
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE ──
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymQsQNmzeVak1AuJeXeUzvXjpu0KbmP35L7aOZzvQ1Y3Ak2aSz6S_EmkQPSesFJfJ0/exec';
+
+  const TOTAL_STEPS = 7;
+  let currentPage = 0;
+
+  // Required field IDs per page
+  const REQUIRED = {
+    1: ['s1_name','s1_dob','s1_city','s1_email','s1_phone','s1_comms'],
+    2: ['s2_upbringing','s2_education','s2_firstjob','s2_turning','s2_passions','s2_values','s2_happy','s2_sad','s2_problem'],
+    3: ['s3_role','s3_tenure','s3_bizdesc','s3_acquisition'],
+    4: ['s4_challenges','s4_notworking','s4_scale','s4_change'],
+    5: ['s5_1yr','s5_5yr','s5_3yr','s5_speaking'],
+    6: ['s6_why','s6_achieve','s6_style','s6_commit'],
+    7: ['s7_different','s7_measure']
+  };
+
+  function validate(pageNum) {
+    const required = REQUIRED[pageNum] || [];
+    let valid = true;
+    required.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const wrapper = el.closest('.field');
+      if (!el.value.trim()) {
+        if (wrapper) { wrapper.classList.add('error'); if (!wrapper.querySelector('.err-msg')) { const m = document.createElement('div'); m.className='err-msg'; m.textContent='This field is required.'; wrapper.appendChild(m); } }
+        valid = false;
+      } else {
+        if (wrapper) wrapper.classList.remove('error');
+      }
+    });
+    if (!valid) showToast('Please complete all required fields before continuing.');
+    return valid;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3500);
+  }
+
+  function goTo(n, skipValidation) {
+    if (!skipValidation && n > currentPage && currentPage >= 1 && currentPage <= 7) {
+      if (!validate(currentPage)) return;
+    }
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = n === 0 ? document.getElementById('page-cover')
+                 : n === 8 ? document.getElementById('page-thankyou')
+                 : n === 9 ? document.getElementById('page-report')
+                 : document.getElementById('page-' + n);
+    if (target) target.classList.add('active');
+    currentPage = n;
+    renderDots();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderDots() {
+    for (let s = 1; s <= TOTAL_STEPS; s++) {
+      const container = document.getElementById('dots' + (s > 1 ? s : ''));
+      if (!container) continue;
+      container.innerHTML = '';
+      for (let i = 1; i <= TOTAL_STEPS; i++) {
+        const d = document.createElement('div');
+        d.className = 'step-dot' + (i < currentPage ? ' done' : i === currentPage ? ' active' : '');
+        container.appendChild(d);
+      }
+    }
+    const d1 = document.getElementById('dots');
+    if (d1) {
+      d1.innerHTML = '';
+      for (let i = 1; i <= TOTAL_STEPS; i++) {
+        const d = document.createElement('div');
+        d.className = 'step-dot' + (i < currentPage ? ' done' : i === currentPage ? ' active' : '');
+        d1.appendChild(d);
+      }
+    }
+  }
+
+  function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+  function getChecked() {
+    return Array.from(document.querySelectorAll('.checkbox-group input[type=checkbox]:checked'))
+      .map(c => c.value).join(', ') || '—';
+  }
+
+  function rptField(label, value) {
+    const empty = !value;
+    return `<div class="rpt-field">
+      <div class="rpt-label">${label}</div>
+      <div class="rpt-value${empty ? ' empty' : ''}">${(value || '—').replace(/\n/g,'<br>')}</div>
+    </div>`;
+  }
+
+  function showReport() {
+    buildReport();
+    goTo(9, true);
+  }
+
+  function collectData() {
+    return {
+      // S1
+      full_name:        val('s1_name'),
+      date_of_birth:    val('s1_dob'),
+      city_country:     val('s1_city'),
+      nationality:      val('s1_nationality'),
+      email:            val('s1_email'),
+      mobile:           val('s1_phone'),
+      preferred_comms:  val('s1_comms'),
+      // S2
+      upbringing:       val('s2_upbringing'),
+      education:        val('s2_education'),
+      first_job:        val('s2_firstjob'),
+      turning_points:   val('s2_turning'),
+      passions:         val('s2_passions'),
+      values:           val('s2_values'),
+      makes_happy:      val('s2_happy'),
+      makes_sad:        val('s2_sad'),
+      biggest_problem:  val('s2_problem'),
+      // S3
+      business_name:    val('s3_bizname'),
+      role:             val('s3_role'),
+      years_in_biz:     val('s3_tenure'),
+      monthly_revenue:  val('s3_revenue'),
+      team_size:        val('s3_team'),
+      biz_description:  val('s3_bizdesc'),
+      acquisition:      val('s3_acquisition'),
+      // S4
+      challenges:       val('s4_challenges'),
+      not_working:      val('s4_notworking'),
+      scaling:          val('s4_scale'),
+      urgent_change:    val('s4_change'),
+      // S5
+      goal_1yr:         val('s5_1yr'),
+      vision_5yr:       val('s5_5yr'),
+      potential_3yr:    val('s5_3yr'),
+      speaking:         val('s5_speaking'),
+      // S6
+      why_applied:      val('s6_why'),
+      excited_about:    getChecked(),
+      program_goals:    val('s6_achieve'),
+      coaching_style:   val('s6_style'),
+      commitment:       val('s6_commit'),
+      // S7
+      differentiator:   val('s7_different'),
+      success_measure:  val('s7_measure'),
+      interview_qs:     val('s7_questions'),
+      // Meta
+      submitted_at:     new Date().toISOString()
+    };
+  }
+
+  async function submitQuestionnaire() {
+    if (!validate(7)) return;
+
+    // Show thank you immediately; POST happens in background
+    buildReport();
+    goTo(8, true);
+
+    // Send data to Google Apps Script
+    try {
+      const data = collectData();
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',           // Apps Script requires no-cors
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+    } catch(e) {
+      console.warn('Submission error:', e);
+    }
+  }
+
+  function buildReport() {
+    const name = val('s1_name') || 'Applicant';
+    const now = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+
+    document.getElementById('report-doc').innerHTML = `
+      <div class="rpt-header">
+        <div class="rpt-badge">Success Resources · Protégé Program</div>
+        <h1>Applicant Profile Report</h1>
+        <div class="rpt-sub">Prepared by: <strong>${name}</strong> &nbsp;·&nbsp; Generated: ${now}</div>
+      </div>
+
+      <div class="rpt-section">
+        <div class="rpt-section-title">Section 1 — Personal Information</div>
+        <div class="rpt-2col">
+          ${rptField('Full Name', val('s1_name'))}
+          ${rptField('Date of Birth', val('s1_dob'))}
+        </div>
+        <div class="rpt-2col">
+          ${rptField('City & Country', val('s1_city'))}
+          ${rptField('Nationality & Ethnicity', val('s1_nationality'))}
+        </div>
+        <div class="rpt-2col">
+          ${rptField('Email Address', val('s1_email'))}
+          ${rptField('Mobile / WhatsApp', val('s1_phone'))}
+        </div>
+        ${rptField('Preferred Communication', val('s1_comms'))}
+      </div>
+
+      <div class="rpt-section">
+        <div class="rpt-section-title">Section 2 — Personal Background & Education</div>
+        ${rptField('Upbringing & Family Background', val('s2_upbringing'))}
+        ${rptField('Education', val('s2_education'))}
+        ${rptField('First Job / Business', val('s2_firstjob'))}
+        ${rptField('Key Turning Points', val('s2_turning'))}
+        ${rptField('Passions & Interests', val('s2_passions'))}
+        ${rptField('Values', val('s2_values'))}
+        <div class="rpt-2col">
+          ${rptField('What Makes You Happy', val('s2_happy'))}
+          ${rptField('What Makes You Sad', val('s2_sad'))}
+        </div>
+        ${rptField('Biggest Problem Right Now', val('s2_problem'))}
+      </div>
+
+      <div class="rpt-section">
+        <div class="rpt-section-title">Section 3 — Business Profile</div>
+        <div class="rpt-2col">
+          ${rptField('Business Name', val('s3_bizname'))}
+          ${rptField('Role / Title', val('s3_role'))}
+        </div>
+        <div class="rpt-2col">
+          ${rptField('Years in Business', val('s3_tenure'))}
+          ${rptField('Monthly Revenue (USD)', val('s3_revenue'))}
+        </div>
+        ${rptField('Team Size', val('s3_team'))}
+        ${rptField('Business Description', val('s3_bizdesc'))}
+        ${rptField('Customer Acquisition Method', val('s3_acquisition'))}
+      </div>
+
+      <div class="rpt-section">
+        <div class="rpt-section-title">Section 4 — Growth Stage & Struggles</div>
+        ${rptField('Top 3 Business Challenges', val('s4_challenges'))}
+        ${rptField('What No Longer Works', val('s4_notworking'))}
+        ${rptField('Regional / International Scaling Attempts', val('s4_scale'))}
+        ${rptField('Most Urgent Change Needed', val('s4_change'))}
+      </div>
+
+      <div class="rpt-section">
+        <div class="rpt-section-title">Section 5 — Vision & Goals</div>
+        ${rptField('1-Year Goal', val('s5_1yr'))}
+        ${rptField('5-Year Vision', val('s5_5yr'))}
+        ${rptField('3-Year Growth Potential (with right support)', val('s5_3yr'))}
+        ${rptField('International Stage Message', val('s5_speaking'))}
+      </div>
+
+      <div class="rpt-section">
+        <div class="rpt-section-title">Section 6 — Program Fit</div>
+        ${rptField('Why Applied', val('s6_why'))}
+        ${rptField('Most Excited About', getChecked())}
+        ${rptField('Goals from the Program', val('s6_achieve'))}
+        <div class="rpt-2col">
+          ${rptField('Preferred Coaching Style', val('s6_style'))}
+          ${rptField('Commitment Level', val('s6_commit'))}
+        </div>
+      </div>
+
+      <div class="rpt-section">
+        <div class="rpt-section-title">Section 7 — Final Reflection</div>
+        ${rptField('What Makes You Different', val('s7_different'))}
+        ${rptField('How You Will Measure Success (6 months)', val('s7_measure'))}
+        ${rptField('Questions for the Interview', val('s7_questions'))}
+      </div>
+
+      <div class="rpt-footer">
+        Success Resources Protégé Program &nbsp;·&nbsp; Confidential Applicant Profile &nbsp;·&nbsp; ${now}
+      </div>
+    `;
+
+  }
+
+  async function downloadDocx() {
+    const { Document, Packer, Paragraph, TextRun, HeadingLevel, BorderStyle, AlignmentType, ShadingType } = docx;
+
+    const GOLD = 'C9A84C';
+    const DARK = '1a1a2e';
+
+    function heading(text) {
+      return new Paragraph({
+        children: [new TextRun({ text, bold: true, color: GOLD, size: 22, font: 'Georgia' })],
+        spacing: { before: 280, after: 100 },
+        border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: GOLD } }
+      });
+    }
+
+    function label(text) {
+      return new Paragraph({
+        children: [new TextRun({ text, bold: true, size: 18, color: '666666', font: 'Georgia' })],
+        spacing: { before: 160, after: 40 }
+      });
+    }
+
+    function answer(text) {
+      const lines = (text || '—').split('\n');
+      return lines.map((line, i) => new Paragraph({
+        children: [new TextRun({ text: line || ' ', size: 22, font: 'Georgia', color: DARK })],
+        spacing: { after: i === lines.length - 1 ? 80 : 0 }
+      }));
+    }
+
+    function section(title, fields) {
+      return [heading(title), ...fields.flatMap(([lbl, id]) => [label(lbl), ...answer(val(id))])];
+    }
+
+    const name = val('s1_name') || 'Applicant';
+    const now = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    const doc = new Document({
+      sections: [{
+        properties: { page: { margin: { top: 1000, bottom: 1000, left: 1200, right: 1200 } } },
+        children: [
+          // Title block
+          new Paragraph({
+            children: [new TextRun({ text: 'SUCCESS RESOURCES PROTÉGÉ PROGRAM', bold: true, size: 20, color: GOLD, font: 'Georgia' })],
+            alignment: AlignmentType.CENTER, spacing: { after: 80 }
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: 'Applicant Profile Report', bold: true, size: 36, color: DARK, font: 'Georgia' })],
+            alignment: AlignmentType.CENTER, spacing: { after: 80 }
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: `Prepared by: ${name}   ·   Generated: ${now}`, size: 18, color: '888888', font: 'Georgia' })],
+            alignment: AlignmentType.CENTER, spacing: { after: 400 }
+          }),
+
+          // S1
+          ...section('Section 1 — Personal Information', [
+            ['Full Name', 's1_name'], ['Date of Birth', 's1_dob'],
+            ['Current City & Country', 's1_city'], ['Nationality & Ethnicity', 's1_nationality'],
+            ['Email Address', 's1_email'], ['Mobile / WhatsApp', 's1_phone'],
+            ['Preferred Communication', 's1_comms']
+          ]),
+
+          // S2
+          ...section('Section 2 — Personal Background & Education', [
+            ['Upbringing & Family Background', 's2_upbringing'],
+            ['Education', 's2_education'],
+            ['First Job / Business', 's2_firstjob'],
+            ['Key Turning Points', 's2_turning'],
+            ['Passions & Interests', 's2_passions'],
+            ['Values', 's2_values'],
+            ['What Makes You Happy', 's2_happy'],
+            ['What Makes You Sad', 's2_sad'],
+            ['Biggest Problem Right Now', 's2_problem']
+          ]),
+
+          // S3
+          ...section('Section 3 — Business Profile', [
+            ['Business Name', 's3_bizname'], ['Role / Title', 's3_role'],
+            ['Years in Business', 's3_tenure'], ['Monthly Revenue (USD)', 's3_revenue'],
+            ['Team Size', 's3_team'], ['Business Description', 's3_bizdesc'],
+            ['Customer Acquisition Method', 's3_acquisition']
+          ]),
+
+          // S4
+          ...section('Section 4 — Growth Stage & Struggles', [
+            ['Top 3 Business Challenges', 's4_challenges'],
+            ['What No Longer Works', 's4_notworking'],
+            ['Regional / International Scaling Attempts', 's4_scale'],
+            ['Most Urgent Change Needed', 's4_change']
+          ]),
+
+          // S5
+          ...section('Section 5 — Vision & Goals', [
+            ['1-Year Goal', 's5_1yr'], ['5-Year Vision', 's5_5yr'],
+            ['3-Year Growth Potential (with right support)', 's5_3yr'],
+            ['International Stage Message', 's5_speaking']
+          ]),
+
+          // S6
+          ...section('Section 6 — Program Fit', [
+            ['Why Applied', 's6_why'],
+            ['Goals from the Program', 's6_achieve'],
+            ['Preferred Coaching Style', 's6_style'],
+            ['Commitment Level', 's6_commit']
+          ]),
+          label('Most Excited About'),
+          ...answer(getChecked()),
+
+          // S7
+          ...section('Section 7 — Final Reflection', [
+            ['What Makes You Different', 's7_different'],
+            ['How You Will Measure Success (6 months)', 's7_measure'],
+            ['Questions for the Interview', 's7_questions']
+          ]),
+
+          // Footer
+          new Paragraph({ children: [], spacing: { before: 400 } }),
+          new Paragraph({
+            children: [new TextRun({ text: `Success Resources Protégé Program  ·  Confidential Applicant Profile  ·  ${now}`, size: 16, color: 'aaaaaa', font: 'Georgia' })],
+            alignment: AlignmentType.CENTER,
+            border: { top: { style: BorderStyle.SINGLE, size: 4, color: 'e8d9b0' } },
+            spacing: { before: 160 }
+          })
+        ]
+      }]
+    });
+
+    const blob = await Packer.toBlob(doc);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `SR_Protege_${name.replace(/\s+/g,'_')}_Profile.docx`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  renderDots();
+</script>
+</body>
+</html>
